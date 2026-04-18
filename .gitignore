@@ -1,7 +1,7 @@
 # Python temp scripts and backups
 *.py
-!app.py
-!requirements.txt
+app.py
+requirements.txt
 
 # Document dumps and extracts
 *.pdf
