@@ -1,0 +1,17 @@
+{
+  "name": "Calculador Ajuste de Rodamientos",
+  "short_name": "CalculadorAjustes",
+  "description": "Calculadora profesional de ajustes de rodamientos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%233b82f6'/><text x='256' y='380' font-size='360' text-anchor='middle' fill='white'>⚙️</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

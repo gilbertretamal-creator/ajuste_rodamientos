@@ -1,0 +1,13 @@
+# Python temp scripts and backups
+*.py
+!app.py
+!requirements.txt
+
+# Document dumps and extracts
+*.pdf
+*.txt
+!requirements.txt
+
+# OS and VSCode
+.DS_Store
+.vscode/

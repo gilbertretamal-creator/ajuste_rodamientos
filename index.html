@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Calculadora profesional de ajustes de rodamientos SKF. Rodillos a rótula y bolas. Juego radial, calado axial y ángulo de apriete.">
+  <title>Calculador Ajuste de Rodamientos</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="app-header">
+      <div class="app-logo">
+        <div class="app-logo-icon">⚙️</div>
+        <div>
+          <h1 class="app-title">Calculador Ajuste de Rodamientos</h1>
+          <p class="app-subtitle">Ajustes de montaje para rodamientos</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══ SEARCH ═══ -->
+    <section class="search-section" id="search-section">
+      <div class="search-wrapper">
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Buscar rodamiento — ej: 22226, 6205, 23130..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <span class="search-icon">🔍</span>
+        <span class="search-hint">↑↓ navegar · Enter seleccionar · Esc cerrar</span>
+
+        <!-- Autocomplete Dropdown -->
+        <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
+      </div>
+    </section>
+
+    <!-- ═══ STATS BAR ═══ -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-item">
+        <span class="stat-dot srb"></span>
+        <span>Rodillos a Rótula:</span>
+        <span class="stat-count" id="stat-srb">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-dot dgbb"></span>
+        <span>Bolas:</span>
+        <span class="stat-count" id="stat-dgbb">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-dot sabb"></span>
+        <span>Autoalineables:</span>
+        <span class="stat-count" id="stat-sabb">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-dot fag_split"></span>
+        <span>Partidos:</span>
+        <span class="stat-count" id="stat-split">0</span>
+      </div>
+      <div class="stat-item">
+        <span>Total:</span>
+        <span class="stat-count" id="stat-total">0</span>
+      </div>
+    </div>
+
+    <!-- ═══ EMPTY STATE ═══ -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-state-icon">🔩</div>
+      <h2 class="empty-state-title">Selecciona un Rodamiento</h2>
+      <p class="empty-state-desc">
+        Escribe la designación en el campo de búsqueda para encontrar el rodamiento y calcular sus ajustes de montaje.
+      </p>
+    </div>
+
+    <!-- ═══ RESULTS PANEL ═══ -->
+    <div class="results-panel" id="results-panel">
+
+      <!-- Bearing Header Card -->
+      <div class="bearing-header-card" id="bearing-header-card">
+        <div class="bearing-title-row">
+          <span class="bearing-designation" id="bearing-designation"></span>
+          <span class="bearing-type-tag" id="bearing-type-tag"></span>
+        </div>
+        <div class="bearing-dims-grid" id="bearing-dims-grid"></div>
+      </div>
+
+      <!-- Two Column Layout -->
+      <div class="content-columns">
+
+        <!-- LEFT: Clearance + Adjustment -->
+        <div class="left-column">
+
+          <!-- Clearance Table Card -->
+          <div class="card" id="clearance-card" style="margin-bottom: 24px;">
+            <div class="card-header">
+              <span class="card-header-icon">📊</span>
+              <span class="card-header-title">Juego Radial Interno (µm)</span>
+            </div>
+            <div class="card-body">
+              <table class="clearance-table" id="clearance-table">
+                <thead>
+                  <tr>
+                    <th>Clase</th>
+                    <th>Mín</th>
+                    <th>Máx</th>
+                  </tr>
+                </thead>
+                <tbody id="clearance-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Fit Recommendations (DGBB only) -->
+          <div class="card" id="fit-card" style="margin-bottom: 24px; display: none;">
+            <div class="card-header">
+              <span class="card-header-icon">🔧</span>
+              <span class="card-header-title">Ajustes Recomendados</span>
+            </div>
+            <div class="card-body">
+              <div class="fit-grid" id="fit-grid"></div>
+            </div>
+          </div>
+
+          <!-- Calculation Form -->
+          <div class="card" id="calc-card">
+            <div class="card-header">
+              <span class="card-header-icon">🧮</span>
+              <span class="card-header-title" id="calc-card-title">Cálculo de Ajuste</span>
+            </div>
+            <div class="card-body">
+              <div id="calc-form-srb">
+                <div class="form-group">
+                  <label class="form-label" for="clearance-class">Clase de juego del rodamiento:</label>
+                  <select class="form-select" id="clearance-class">
+                    <option value="CN">CN — Normal</option>
+                    <option value="C3" selected>C3 — Mayor que Normal</option>
+                    <option value="C4">C4 — Mayor que C3</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="measured-clearance">Juego radial medido (mm) — galga de espesores:</label>
+                  <input type="number" class="form-input" id="measured-clearance" step="0.001" min="0" placeholder="Ej: 0.170">
+                </div>
+                <button class="btn-calculate" id="btn-calculate" onclick="calculateAdjustment()">
+                  ⚡ Calcular Ajuste
+                </button>
+              </div>
+
+              <!-- Results -->
+              <div id="calc-results" style="display: none;"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: CAD Drawing -->
+        <div class="right-column">
+          <div class="cad-container">
+            <div class="cad-header">
+              <div class="cad-header-left">
+                <span class="cad-header-icon">📐</span>
+                <span class="cad-header-title">Vista en Corte</span>
+              </div>
+              <span class="cad-scale-info" id="cad-scale-info"></span>
+            </div>
+            <div class="cad-body" id="cad-body">
+              <!-- SVG will be rendered here -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="app-footer">
+      <p>Calculador Ajuste de Rodamientos v2.0</p>
+      <p class="disclaimer">⚠️ Para aplicaciones críticas, siempre verifique los valores con los catálogos oficiales vigentes.</p>
+    </footer>
+
+  </div>
+
+  <script src="bearings-data.js?v=4"></script>
+  <script src="app.js?v=4"></script>
+  <script>
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[PWA] Service Worker registrado:', reg.scope))
+          .catch(err => console.log('[PWA] Error:', err));
+      });
+    }
+  </script>
+</body>
+</html>
